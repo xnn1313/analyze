@@ -28,7 +28,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8080")
 public class FileUploadController {
 
     @PostMapping("/upload")
@@ -47,6 +46,7 @@ public class FileUploadController {
                     cell.setCellValue(sentence.trim());
                     Cell cell1 = row.createCell(1);
                     cell1.setCellValue(result);
+                    rowCount++;
                 }
             }
                 try {
