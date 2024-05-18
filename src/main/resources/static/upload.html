@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        form {
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        label {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button[type="submit"] {
+            background-color: #2ecc71;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background-color: #27ae60;
+        }
+        #loadingIndicator {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<h2>复句分析</h2>
+<form id="uploadForm" enctype="multipart/form-data">
+    <label for="file" id="fileLabel">选择文件</label>
+    <input type="file" name="file" id="file">
+    <button type="submit">上传</button>
+</form>
+
+<div id="response"></div>
+<div id="loadingIndicator">分析中...</div>
+
+<script>
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        // 显示加载指示器
+        document.getElementById('loadingIndicator').style.display = 'block';
+        var formData = new FormData();
+        formData.append('file', document.getElementById('file').files[0]);
+
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.blob())
+            .then(blob => {
+                // 隐藏加载指示器
+                document.getElementById('loadingIndicator').style.display = 'none';
+                // 创建一个Blob URL，并使用<a>标签模拟点击以下载文件
+                var url = window.URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'test.xlsx'; // 文件下载的默认名称
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            })
+    });
+
+    document.getElementById('file').addEventListener('change', function() {
+        var fileName = this.files[0].name;
+        document.getElementById('fileLabel').innerText = fileName;
+    });
+</script>
+</body>
+</html>
